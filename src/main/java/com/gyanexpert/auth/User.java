@@ -6,6 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/*
+ * User Data ORM entity class 
+ */
+
 @Entity
 public class User {
  
@@ -18,16 +22,27 @@ public class User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public User(String username, String password) {
+	public User(String username, String password, String firstName) {
 		super();
 		this.username = username;
 		this.password = password;
+		this.firstName = firstName;
 	}
 
 	@Column(nullable = false, unique = true)
     private String username;
+	
+	private String firstName;
  
-    private String password;
+    public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	private String password;
 
 	public String getUsername() {
 		return username;

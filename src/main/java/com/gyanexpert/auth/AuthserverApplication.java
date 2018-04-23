@@ -5,11 +5,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
@@ -24,8 +26,12 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 	@Bean
 	public CommandLineRunner demo(UserRepository repo) {
 		return (args)->{
-			repo.save(new User("abhi","Abhi"));
-			repo.save(new User("swati","swati"));
+			
+			repo.save(new User("abhi", passwordEncoder().encode("Abhi"),"Abhishek"));
+			repo.save(new User("swati", passwordEncoder().encode("swati"),"Swati"));
+			for(User user: repo.findAll())
+				System.out.println(user.getUsername()+"Password:"+user.getPassword());
+			System.out.println("Password:"+passwordEncoder().encode("acmesecret"));
 		};
 	}
 	
@@ -59,17 +65,30 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication().withUser("abhi")
         .password("password").roles("USER");*/
 		
-		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+		//auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+		auth.authenticationProvider(authenticationProvider());
 	}
+	/*
 	@Bean
     public static NoOpPasswordEncoder passwordEncoder() {
     return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
-    }
+    }*/
 	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		//return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		return new BCryptPasswordEncoder();
+	}
 	
-	/*@RequestMapping("/user")
-	public Principal user(Principal user) {
-		return user;
-	}*/
+	/*@Autowired
+	private UserDetailsService userDetailsService;*/
 	
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+	    DaoAuthenticationProvider authProvider
+	      = new DaoAuthenticationProvider();
+	    authProvider.setUserDetailsService(userDetailsService());
+	    authProvider.setPasswordEncoder(passwordEncoder());
+	    return authProvider;
+	}
 }
