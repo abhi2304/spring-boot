@@ -1,4 +1,4 @@
-package com.gyanexpert.auth;
+package com.gyanexpert.auth.config;
 
 import java.util.Collection;
 
@@ -17,7 +17,7 @@ public class CustomUserDetails extends User {
 	
 	private String firstName;
 
-	public CustomUserDetails(com.gyanexpert.auth.User user, Collection<? extends GrantedAuthority> authorities) {
+	public CustomUserDetails(com.gyanexpert.auth.db.User user, Collection<? extends GrantedAuthority> authorities) {
 		super(user.getUsername(), user.getPassword(), authorities);
 		firstName = user.getFirstName();
 	}

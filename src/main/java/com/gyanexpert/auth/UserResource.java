@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @EnableResourceServer
 public class UserResource extends ResourceServerConfigurerAdapter {
-	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http

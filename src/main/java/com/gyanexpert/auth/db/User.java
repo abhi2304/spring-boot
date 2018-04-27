@@ -1,4 +1,4 @@
-package com.gyanexpert.auth;
+package com.gyanexpert.auth.db;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

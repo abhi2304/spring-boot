@@ -14,6 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gyanexpert.auth.config.MyUserDetailsService;
+import com.gyanexpert.auth.db.User;
+import com.gyanexpert.auth.db.UserRepository;
+
 @SpringBootApplication
 @RestController
 public class AuthserverApplication extends WebSecurityConfigurerAdapter {
@@ -21,20 +25,6 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthserverApplication.class, args);
 	}
-	
-	
-	@Bean
-	public CommandLineRunner demo(UserRepository repo) {
-		return (args)->{
-			
-			repo.save(new User("abhi", passwordEncoder().encode("Abhi"),"Abhishek"));
-			repo.save(new User("swati", passwordEncoder().encode("swati"),"Swati"));
-			for(User user: repo.findAll())
-				System.out.println(user.getUsername()+"Password:"+user.getPassword());
-			System.out.println("Password:"+passwordEncoder().encode("acmesecret"));
-		};
-	}
-	
 	
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -54,34 +44,22 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
         .antMatchers("/", "/login**")
         .permitAll().anyRequest().authenticated().and().formLogin().and().httpBasic();*/
 		
-		http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+		http
+			.authorizeRequests()
+			.anyRequest()
+			.authenticated().and().formLogin().and().httpBasic().disable();
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// TODO Auto-generated method stub
-		/*auth.inMemoryAuthentication().withUser("user")
-        .password("password").roles("USER");
-		auth.inMemoryAuthentication().withUser("abhi")
-        .password("password").roles("USER");*/
-		
-		//auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
 		auth.authenticationProvider(authenticationProvider());
 	}
-	/*
-	@Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-    return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
-    }*/
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		//return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		return new BCryptPasswordEncoder();
 	}
 	
-	/*@Autowired
-	private UserDetailsService userDetailsService;*/
 	
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
@@ -90,5 +68,18 @@ public class AuthserverApplication extends WebSecurityConfigurerAdapter {
 	    authProvider.setUserDetailsService(userDetailsService());
 	    authProvider.setPasswordEncoder(passwordEncoder());
 	    return authProvider;
+	}
+	
+	
+	@Bean
+	public CommandLineRunner demo(UserRepository repo) {
+		return (args)->{
+			
+			repo.save(new User("abhi", passwordEncoder().encode("Abhi"),"Abhishek"));
+			repo.save(new User("swati", passwordEncoder().encode("swati"),"Swati"));
+			for(User user: repo.findAll())
+				System.out.println(user.getUsername()+"Password:"+user.getPassword());
+			System.out.println("Password:"+passwordEncoder().encode("acmesecret"));
+		};
 	}
 }

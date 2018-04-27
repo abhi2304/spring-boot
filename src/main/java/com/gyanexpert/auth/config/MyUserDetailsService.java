@@ -1,4 +1,4 @@
-package com.gyanexpert.auth;
+package com.gyanexpert.auth.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.gyanexpert.auth.db.User;
+import com.gyanexpert.auth.db.UserRepository;
 
 public class MyUserDetailsService implements UserDetailsService {
 
